@@ -1,15 +1,14 @@
 import json
 import logging
-import requests
-import os
-from time import sleep
+import subprocess
 from ulauncher.api.client.Extension import Extension
 from ulauncher.api.client.EventListener import EventListener
-from ulauncher.api.shared.event import KeywordQueryEvent, ItemEnterEvent
-from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
 from ulauncher.api.shared.action.RenderResultListAction import RenderResultListAction
-from ulauncher.api.shared.action.ExtensionCustomAction import ExtensionCustomAction
+from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
+from ulauncher.api.shared.event import KeywordQueryEvent, ItemEnterEvent
 from ulauncher.api.shared.action.HideWindowAction import HideWindowAction
+from ulauncher.api.shared.action.ExtensionCustomAction import ExtensionCustomAction
+
 
 logger = logging.getLogger(__name__)
 
@@ -19,26 +18,34 @@ class SmsExtension(Extension):
     def __init__(self):
         super(SmsExtension, self).__init__()
         self.subscribe(KeywordQueryEvent, KeywordQueryEventListener())
-
+        self.subscribe(ItemEnterEvent, RunCommand())
 
 class KeywordQueryEventListener(EventListener):
 
     def on_event(self, event, extension):
+        command = event.get_argument()
+        data = { "command": command }
+        logger.warn(data)
 
-        raw_str = event.get_argument()
-        url = "https://smsapi.free-mobile.fr/sendmsg"
 
-        payload = json.dumps({
-                "user": extension.preferences['user'],
-                "pass": extension.preferences['pass'],
-                "msg": raw_str })
-        headers = {'Content-Type': 'application/json'}
-        response = requests.request("POST", url, headers=headers, data=payload)
+        return RenderResultListAction([ExtensionResultItem(icon='images/sms.png',
+                                         name='Send %s' % (command),
+                                         on_enter=ExtensionCustomAction(data))])
 
-        print(response.text)
+class RunCommand(EventListener):
 
-        return RunScriptAction()
+    def on_event(self, event, extension):
 
+        data = event.get_data()
+
+        user = extension.preferences["user"]
+        passwd = extension.preferences["pass"]
+        command = data["command"]
+        logger.warn(user)
+
+        # subprocess.run(["/bin/terminator", "-c", "print('ocean')"])
+
+        return HideWindowAction()
 
 
 if __name__ == '__main__':
