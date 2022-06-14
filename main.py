@@ -37,7 +37,7 @@ class KeywordQueryEventListener(EventListener):
 
         print(response.text)
 
-        return HideWindowAction()
+        return RunScriptAction()
 
 
 

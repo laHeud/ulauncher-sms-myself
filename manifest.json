@@ -1,7 +1,7 @@
 {
   "required_api_version": "^2.0.0",
   "name": "Demo",
-  "description": "Demo extension",
+  "description": "Sms extension",
   "developer_name": "Passevant Clement",
   "icon": "images/icon.png",
   "options": {
