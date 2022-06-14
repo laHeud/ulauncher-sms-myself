@@ -1,5 +1,7 @@
 import json
 import logging
+import requests
+import os
 from time import sleep
 from ulauncher.api.client.Extension import Extension
 from ulauncher.api.client.EventListener import EventListener
@@ -12,38 +14,32 @@ from ulauncher.api.shared.action.HideWindowAction import HideWindowAction
 logger = logging.getLogger(__name__)
 
 
-class DemoExtension(Extension):
+class SmsExtension(Extension):
 
     def __init__(self):
-        super(DemoExtension, self).__init__()
+        super(SmsExtension, self).__init__()
         self.subscribe(KeywordQueryEvent, KeywordQueryEventListener())
-        self.subscribe(ItemEnterEvent, ItemEnterEventListener())
 
 
 class KeywordQueryEventListener(EventListener):
 
     def on_event(self, event, extension):
-        items = []
-        logger.info('preferences %s' % json.dumps(extension.preferences))
-        for i in range(5):
-            item_name = extension.preferences['item_name']
-            data = {'new_name': '%s %s was clicked' % (item_name, i)}
-            items.append(ExtensionResultItem(icon='images/icon.png',
-                                             name='%s %s' % (item_name, i),
-                                             description='Item description %s' % i,
-                                             on_enter=ExtensionCustomAction(data, keep_app_open=True)))
 
-        return RenderResultListAction(items)
+        raw_str = event.get_argument()
+        url = "https://smsapi.free-mobile.fr/sendmsg"
 
+        payload = json.dumps({
+                "user": extension.preferences['user'],
+                "pass": extension.preferences['pass'],
+                "msg": raw_str })
+        headers = {'Content-Type': 'application/json'}
+        response = requests.request("POST", url, headers=headers, data=payload)
 
-class ItemEnterEventListener(EventListener):
+        print(response.text)
 
-    def on_event(self, event, extension):
-        data = event.get_data()
-        return RenderResultListAction([ExtensionResultItem(icon='images/icon.png',
-                                                           name=data['new_name'],
-                                                           on_enter=HideWindowAction())])
+        return HideWindowAction()
+
 
 
 if __name__ == '__main__':
-    DemoExtension().run()
+    SmsExtension().run()

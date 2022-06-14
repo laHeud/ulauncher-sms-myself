@@ -2,7 +2,7 @@
   "required_api_version": "^2.0.0",
   "name": "Demo",
   "description": "Demo extension",
-  "developer_name": "Aleksandr Gornostal",
+  "developer_name": "Passevant Clement",
   "icon": "images/icon.png",
   "options": {
     "query_debounce": 0.05
@@ -11,21 +11,21 @@
     {
       "id": "demo_kw",
       "type": "keyword",
-      "name": "Demo",
-      "default_value": "dm"
+      "name": "SMS",
+      "default_value": "sms"
     },
     {
-      "id": "item_name",
-      "type": "input",
-      "name": "Item name",
-      "description": "Name for each item",
-      "default_value": "Item"
-    },
-    {
-      "id": "memo",
+      "id": "user",
       "type": "text",
-      "name": "Memo",
-      "description": "Write something here",
+      "name": "User Id",
+      "description": "User Id",
+      "default_value": "12345"
+    },
+    {
+      "id": "psswd",
+      "type": "text",
+      "name": "Key",
+      "description": "Key for send sms",
       "default_value": ""
     }
   ]
