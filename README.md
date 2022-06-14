@@ -1,3 +1,3 @@
 # Demo Extension
 
-<img aligh="center" src="http://i.imgur.com/NFFR1tm.png">
+Create an extension for sending sms via API
